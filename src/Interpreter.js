@@ -1,9 +1,10 @@
-export default class Interpreter{
-	visit(node){
-		return node.accept(this)
+export default class Interpreter {
+	visit(ast) {
+		return ast.accept(this)
 	}
-}
 
-visitInteger(node){
-	return node.value
+
+	visitInteger(node) {
+		return node.value
+	}
 }

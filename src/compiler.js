@@ -26,11 +26,14 @@
 //   The default printFunction simply writes to the console. I also have
 //   a version that the tests use so I can capture output.
 
-import Interpreter from "Interpreter.js"
+import Interpreter from "./Interpreter.js"
+import * as AST from "./AST.js"
 
 export default function compileAndRun(grammar, script, printFunction) {
-  grammar.parse(script)
-  let interpreter = Interpreter()
-
-  return 
+  let ast = grammar.parse(script, { AST: AST })
+  console.log("AST", ast)
+  let interpreter = new Interpreter()
+  let result = interpreter.visit(ast)
+  console.log("Result = ", result)
+  return result
 }
