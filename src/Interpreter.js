@@ -3,8 +3,22 @@ export default class Interpreter {
 		return ast.accept(this)
 	}
 
+	visitBinOp(ast){
+		let left = ast.left.accept(this)
+		let right = ast.right.accept(this)
+		switch(ast.op){
+			case "+":
+				return left + right
+			case "-":
+				return left - right
+			case "*":
+				return left * right
+			case "/":
+				return left / right
+		}
+	}
 
-	visitInteger(node) {
-		return node.value
+	visitInteger(ast) {
+		return ast.value
 	}
 }
