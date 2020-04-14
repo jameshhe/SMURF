@@ -14,7 +14,7 @@ export default class Interpreter {
 			case "*":
 				return left * right
 			case "/":
-				return left / right
+				return Math.round(left / right)
 		}
 	}
 

@@ -21,10 +21,10 @@ mult_term
 	  }
 
 primary
-	=  integer / "(" expr:arithmetic_expression ")" {return expr} 
+	=  integer / _ "(" _ expr:arithmetic_expression _ ")" _ {return expr} 
 
 integer
-	= (_) ("+" / "-")?[0-9]+ (_)
+	= _ ("+" / "-")?[0-9]+ _
 	  { 
 	  	return new AST.Integer(parseInt(text(), 10)) 
 	  }
