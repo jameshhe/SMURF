@@ -48,27 +48,18 @@ const Associativity = [
 ]
 
 let grammar = loadGrammar()
-let dummyPrint = () => { throw("shouldn't call this") }
+let dummyPrint = () => { throw ("shouldn't call this") }
 
-test("basic expressions", t => {
-  testValues(t, BasicExpressions)
-})
+testValues(BasicExpressions)
+testValues(ExpressionsWithParentheses)
+testValues(ExpressionsWithWhitespace)
+testValues(Associativity)
 
-test("expressions with parentheses", t => {
-  testValues(t, ExpressionsWithParentheses)
-})
-
-test("expressions with whitespace", t => {
-  testValues(t, ExpressionsWithWhitespace)
-})
-
-test("expressions with left associativity", t => {
-  testValues(t, Associativity)
-})
-
-function testValues(t, values) {
+function testValues(values) {
   values.forEach(v => {
-    let result = compileAndRun(grammar, v, dummyPrint)
-    t.is(result, Math.round(eval(v)), "given: " + v)
+    test(v, t => {
+      let result = compileAndRun(grammar, v, dummyPrint)
+      t.is(result, Math.round(eval(v)), "given: " + v)
+    })
   })
 }
