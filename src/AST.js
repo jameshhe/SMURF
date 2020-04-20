@@ -13,7 +13,8 @@ function makeNode(name, ...attributes) {
 }
 
 
-
+export const FunctionCall = makeNode("FunctionCall", "name", "args") 
+export const FunctionDefinition = makeNode("FunctionDefinition", "formals", "code")
 export const StatementList = makeNode("StatementList", "statements")
 export const Assignment = makeNode("Assignment", "variable", "expr")
 export const IfStatement = makeNode("IfStatement", "predicate", "thenCode", "elseCode")

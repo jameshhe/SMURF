@@ -6,13 +6,13 @@ start
 	= code
 
 code
-	= statements:(statement+)
+	= statements:(statement)+
 	  {
 	  	return new AST.StatementList(statements)
 	  }
 
 statement
-	= "let" __ assign:variable_declaration {return assign} / assignment / expr
+	= "let" __ assign:(variable_declaration) __ {return assign} / assignment / expr
 
 variable_declaration
 	= assignment 
@@ -23,7 +23,7 @@ variable_declaration
 	}
 
 assignment
-	= l:variable_name _ "="  _ r:expr
+	= l:(variable_name) _ "="  _ r:expr
 	  {
 	  	return new AST.Assignment(l,r)
 	  }
@@ -41,13 +41,17 @@ variable_name
 	  }
 
 expr
-	= "if" __ expr:if_expression {return expr} / boolean_expression / arithmetic_expression
+	= "fn" _ expr:function_definition {return expr} 
+	  / "if" __ expr:if_expression {return expr} 
+	  / boolean_expression 
+	  / arithmetic_expression
 
 if_expression
 	= elements: (expr brace_block "else" brace_block) 
 	  {	
 	  	return new AST.IfStatement(elements[0],elements[1],elements[3])
-	  } /
+	  } 
+	  /
 	  elements:(expr brace_block)
 	  {
 	  	return new AST.IfStatement(elements[0],elements[1],null)
@@ -78,7 +82,7 @@ mult_term
 	  }
 
 primary
-	=  integer / variable_value / _ "(" _ expr:arithmetic_expression _ ")" _ {return expr} 
+	=  integer / function_call / variable_value / _ "(" _ expr:arithmetic_expression _ ")" _ {return expr} 
 
 identifier
 	= [a-z][a-zA-Z_0-9]*
@@ -103,8 +107,22 @@ _
 relop
 	= ('==' / '!=' / '>=' / '>' / '<=' / '<')
 
+
+function_call
+	= name:variable_value "(" _ ")"
+	  {
+	  	return new AST.FunctionCall(name, null)
+	  }
+
+
+function_definition
+	= params:param_list code:brace_block    
+	  { 
+	  	return new AST.FunctionDefinition(params, code) 
+	  }
+
 param_list
-   = "(" ")"
+   = "(" _ ")"
 
 brace_block
 	= _ "{" _ c:code _ "}" _
