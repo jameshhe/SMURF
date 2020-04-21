@@ -12,7 +12,7 @@ code
 	  }
 
 statement
-	= "let" __ assign:(variable_declaration) __ {return assign} / assignment / expr
+	= "let" __ assign:(variable_declaration) _ {return assign} / assignment / expr
 
 variable_declaration
 	= assignment 
@@ -109,14 +109,14 @@ relop
 
 
 function_call
-	= name:variable_value "(" _ ")"
+	= _ name:variable_value "(" _ ")" _
 	  {
 	  	return new AST.FunctionCall(name, null)
 	  }
 
 
 function_definition
-	= params:param_list code:brace_block    
+	= params:param_list _ code:brace_block    
 	  { 
 	  	return new AST.FunctionDefinition(params, code) 
 	  }

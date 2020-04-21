@@ -27,8 +27,6 @@ export default class Interpreter {
 		let result
 		for(let statement of statements){
 			result = statement.accept(this)
-			console.log("Result " + result)
-			console.log(this.binding)
 		}
 		return result
 	}
@@ -51,8 +49,7 @@ export default class Interpreter {
 	visitAssignment(ast){
 		let variable = ast.variable.accept(this)
 		let expr = ast.expr.accept(this)
-		console.log(variable)
-		this.setVariable(variable, expr)
+		this.setVariable(variable[0], expr)
 		return expr
 	}
 
@@ -61,8 +58,7 @@ export default class Interpreter {
 	}
 
 	visitVariableValue(ast){
-		console.log("AST Name: " + ast.name + " Return Value: " + this.binding.get(ast.name))
-		return this.binding.get(ast.name)
+		return this.binding.get(ast.name[0])
 	}
 
 	setVariable(name, value){
