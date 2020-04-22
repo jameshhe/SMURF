@@ -1,5 +1,3 @@
-
-
 export default class Interpreter {
 	constructor(target, printFunction){
 		this.binding = new Map()
