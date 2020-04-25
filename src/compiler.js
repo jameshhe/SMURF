@@ -31,9 +31,7 @@ import * as AST from "./AST.js"
 
 export default function compileAndRun(grammar, script, printFunction) {
   let ast = grammar.parse(script, { AST: AST })
-  console.log("AST", ast)
   let interpreter = new Interpreter()
   let result = interpreter.visit(ast)
-  console.log("Result = ", result)
   return result
 }

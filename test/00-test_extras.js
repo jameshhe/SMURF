@@ -17,8 +17,13 @@ const Expressions = [
 
 Expressions.forEach(v => {
   test(v, t => {
-    console.log(v)
     let result = compileAndRun(grammar, v, dummyPrint)
     t.is(result, Math.round(eval(v)), "given: " + v)
   })
+})
+
+test("rounding applied correctly", t => {
+  let v = "(18 / 7) * 7"
+  let result = compileAndRun(grammar, v, dummyPrint)
+  t.is(result, 21, "given: " + v)
 })
