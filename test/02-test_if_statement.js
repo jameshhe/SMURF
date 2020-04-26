@@ -21,6 +21,10 @@ const blockNesting = [
   "if 0 { 99 } else { if 0 {99} else {-99}}"
 ]
 
+const noElse = [
+  "if 0 {99}"
+]
+
 
 let grammar = loadGrammar()
 let dummyPrint = () => { throw ("shouldn't call this") }
@@ -29,6 +33,7 @@ testIf(trueBlock, 99)
 testIf(falseBlock, -99)
 testIf(conditionNesting, -99)
 testIf(blockNesting, -99)
+testIf(noElse, 0)
 
 function testIf(values, expected) {
   values.forEach(v => {

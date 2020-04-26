@@ -15,7 +15,6 @@ export default function loadGrammar() {
     return pegjs.generate(grammarSrc, { trace: false })
   }
   catch (e) {
-    console.log(`In ${grammarFileName} line ${e.location.start.line} @ ${e.location.start.column}`)
     console.log(e.message)
     process.exit(1)
   }

@@ -50,3 +50,15 @@ function testBoolean(values, expected) {
     })
   })
 }
+
+test("True is 1", t => {
+  let result = compileAndRun(grammar, "1 == 1", dummyPrint)
+  t.is(typeof result, 'number')
+  t.is(result, 1, "given: 1 == 1" )
+})
+
+test("false is 0", t => {
+  let result = compileAndRun(grammar, "1 == 2", dummyPrint)
+  t.is(typeof result, 'number')
+  t.is(result, 0, "given: 1 == 2")
+})
