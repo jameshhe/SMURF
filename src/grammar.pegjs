@@ -12,18 +12,21 @@ code
 	  }
 
 statement
-	= "let" __ assign:(variable_declaration) _ {return assign} / assignment / expr
+	= _ "let" _ assign:(variable_declaration) _ {return assign} / assignment / expr
 
 variable_declaration
-	= assignment 
-	/ l:variable_name 
+	= _ l:(variable_name) _ "="  _ r:expr
+	{
+		return new AST.Declaration(l,r)
+	}
+	/ _ l:variable_name _
 	{
 		let zero = new AST.Integer(0)
-		return new AST.Assignment(l,zero)
+		return new AST.Declaration(l,zero)
 	}
 
 assignment
-	= l:(variable_name) _ "="  _ r:expr
+	= _ l:(variable_name) _ "="  _ r:expr
 	  {
 	  	return new AST.Assignment(l,r)
 	  }
@@ -109,7 +112,7 @@ relop
 
 
 function_call
-	= _ name:variable_value "(" _ ")" _
+	= _ name:variable_value _ "(" _ ")" _
 	  {
 	  	return new AST.FunctionCall(name, null)
 	  }
