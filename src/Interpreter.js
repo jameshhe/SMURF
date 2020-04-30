@@ -51,7 +51,7 @@ export default class Interpreter {
 		let expr = ast.expr.accept(this)
 		// if a variable already exists
 		if(this.binding.hasVariable(variable[0])){
-			throw "Duplicate variable name not allowed!"
+			throw new Error("Duplicate variable name not allowed!")
 		}
 		//console.log("In declaration", variable, expr)
 		this.binding.declareVariable(variable[0], expr)
@@ -71,7 +71,13 @@ export default class Interpreter {
 	}
 
 	visitVariableValue(ast){
-		return this.binding.getVariable(ast.name[0])
+		// check if the value was defined first
+		if(this.binding.hasVariable(ast.name[0])){
+			return this.binding.getVariable(ast.name[0])
+		}
+		else{
+			throw new Error("Variable has not been defined!")
+		}
 	}
 
 
@@ -131,7 +137,7 @@ class Binding{
 		if(!this.binding.has(name)){
 			if(this.parent == null){
 				// if we've gone all the way up to the root and still haven't found the name
-				throw "Variable name not found!"
+				throw new Error("Variable name not found!")
 			}
 			return this.parent.updateVariable(name, value)
 		}
@@ -146,7 +152,7 @@ class Binding{
 		if(!this.binding.has(name)){
 			if(this.parent == null){
 				// if we've gone all the way up to the root and still haven't found the name
-				throw "Variable name not found!"
+				throw new Error("Variable name not found!")
 			}
 			return this.parent.getVariable(name)
 		}
@@ -166,5 +172,9 @@ class Binding{
 		}
 		// if this binding does have the variable, return true
 		return true
+	}
+	//print out the currrent binding
+	print(){
+		console.log(this.binding)
 	}
 }
