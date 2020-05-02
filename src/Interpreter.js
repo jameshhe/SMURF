@@ -1,3 +1,6 @@
+import * as AST from "./AST.js"
+
+
 export default class Interpreter {
 	constructor(target, printFunction){
 		this.binding = new Binding()
@@ -9,15 +12,31 @@ export default class Interpreter {
 	}
 
 	visitFunctionCall(ast){
-		let bodyAst = ast.name.accept(this)
-		if(ast.args != null){
-			let argsToPass = ast.args.accept(this)
+		let thunk = ast.name.accept(this)
+		// create new binding whose parent is thunk binding
+		let funcBinding = thunk.binding.push()
+
+		let argNames = thunk.formals
+		let argVals = ast.args
+
+		// verify the length of the arguments
+		if(argNames.length != argVals.length){
+			throw new Error(`Function requires ${argNames.length} arguments but ${argVals.length} passed in`)
 		}
-		return bodyAst.accept(this)
+
+		// for each argument
+		argNames.forEach((argName, index)=>{
+			const argVal = argVals[index]
+			funcBinding.declareVariable(argName.name, argVal.value)
+		})
+		
 	}
 
 	visitFunctionDefinition(ast) {
-		return ast.code 
+		return new AST.Thunk(ast.formals, ast.code, this.binding)
+	}
+
+	visitThunk(ast){
 	}
 
 	visitStatementList(ast){
@@ -50,11 +69,11 @@ export default class Interpreter {
 		let variable = ast.variable.accept(this)
 		let expr = ast.expr.accept(this)
 		// if a variable already exists
-		if(this.binding.hasVariable(variable[0])){
+		if(this.binding.hasVariable(variable)){
 			throw new Error("Duplicate variable name not allowed!")
 		}
 		//console.log("In declaration", variable, expr)
-		this.binding.declareVariable(variable[0], expr)
+		this.binding.declareVariable(variable, expr)
 		return expr
 	}
 
@@ -62,7 +81,7 @@ export default class Interpreter {
 		let variable = ast.variable.accept(this)
 		let expr = ast.expr.accept(this)
 		//console.log("In assigning", variable, expr)
-		this.binding.updateVariable(variable[0], expr)
+		this.binding.updateVariable(variable, expr)
 		return expr
 	}
 
@@ -72,11 +91,11 @@ export default class Interpreter {
 
 	visitVariableValue(ast){
 		// check if the value was defined first
-		if(this.binding.hasVariable(ast.name[0])){
-			return this.binding.getVariable(ast.name[0])
+		if(this.binding.hasVariable(ast.name)){
+			return this.binding.getVariable(ast.name)
 		}
 		else{
-			throw new Error("Variable has not been defined!")
+			throw new Error(`Variable name ${ast.name} is not defined!`)
 		}
 	}
 
@@ -137,7 +156,7 @@ class Binding{
 		if(!this.binding.has(name)){
 			if(this.parent == null){
 				// if we've gone all the way up to the root and still haven't found the name
-				throw new Error("Variable name not found!")
+				throw new Error(`Variable name ${name} not found!`)
 			}
 			return this.parent.updateVariable(name, value)
 		}
@@ -152,7 +171,7 @@ class Binding{
 		if(!this.binding.has(name)){
 			if(this.parent == null){
 				// if we've gone all the way up to the root and still haven't found the name
-				throw new Error("Variable name not found!")
+				throw new Error(`Variable name ${name} not found!`)
 			}
 			return this.parent.getVariable(name)
 		}
@@ -172,9 +191,5 @@ class Binding{
 		}
 		// if this binding does have the variable, return true
 		return true
-	}
-	//print out the currrent binding
-	print(){
-		console.log(this.binding)
 	}
 }

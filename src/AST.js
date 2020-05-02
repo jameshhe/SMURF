@@ -15,6 +15,7 @@ function makeNode(name, ...attributes) {
 
 export const FunctionCall = makeNode("FunctionCall", "name", "args") 
 export const FunctionDefinition = makeNode("FunctionDefinition", "formals", "code")
+export const Thunk = makeNode("Thunk", "formals", "code", "binding")
 export const StatementList = makeNode("StatementList", "statements")
 export const Assignment = makeNode("Assignment", "variable", "expr")
 export const Declaration = makeNode("Declaration", "variable", "expr")

@@ -32,13 +32,13 @@ assignment
 	  }
 
 variable_value
-	= id:identifier
+	= _ id:identifier _
 	  {
 	  	return new AST.VariableValue(id)
 	  }
 
 variable_name
-	= id:identifier
+	= _ id:identifier _
 	  {
 	  	return new AST.VariableName(id)
 	  }
@@ -89,6 +89,9 @@ primary
 
 identifier
 	= [a-z][a-zA-Z_0-9]*
+	  {
+	  	return text()
+	  }
 
 integer
 	= _ ("+" / "-")?[0-9]+ _
@@ -112,20 +115,41 @@ relop
 
 
 function_call
-	= _ name:variable_value _ "(" _ ")" _
+	= _ name:variable_value _ argumentList:arg_list _
 	  {
-	  	return new AST.FunctionCall(name, null)
+	  	return new AST.FunctionCall(name, argumentList)
+	  }
+
+arg_list
+	= _ "(" argument:(args)* ")" _
+	  {
+	  	return argument
 	  }
 
 
+args
+	= _ prim: primary (",")? _
+	{
+		return prim
+	}
+
 function_definition
-	= params:param_list _ code:brace_block    
+	= params:param_list code:brace_block    
 	  { 
 	  	return new AST.FunctionDefinition(params, code) 
 	  }
 
 param_list
-   = "(" _ ")"
+   =  _ "(" params:(parameters)* ")" _
+   	  {
+   	  	return params
+   	  }
+
+parameters
+	= _ val:variable_value (",")? _
+	  {
+	  	return val
+	  }
 
 brace_block
 	= _ "{" _ c:code _ "}" _
