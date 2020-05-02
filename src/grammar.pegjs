@@ -114,7 +114,7 @@ relop
 	= ('==' / '!=' / '>=' / '>' / '<=' / '<')
 
 print
-	= _ "print" _ "(" _ c:code _ ")" 
+	= _ "print" _ c:arg_list
 	  {
 	  	return new AST.Print(c)
 	  }

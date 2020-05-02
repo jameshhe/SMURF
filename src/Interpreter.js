@@ -10,11 +10,17 @@ export default class Interpreter {
 
 
 	visit(ast) {
+		// console.log(this.binding)
 		return ast.accept(this)
 	}
 
 	visitPrint(ast){
-		console.log(ast.code.accept(this))
+		let printArray = []
+		ast.code.forEach((c)=>{
+			printArray.push(c.accept(this).toString())
+		})
+		console.log(printArray)
+		return printArray
 	}
 
 	visitFunctionCall(ast){
@@ -86,10 +92,9 @@ export default class Interpreter {
 		let variable = ast.variable.accept(this)
 		let expr = ast.expr.accept(this)
 		// if a variable already exists
-		if(this.binding.hasVariable(variable)){
+		if(this.binding.containsVariable(variable)){
 			throw new Error("Duplicate variable name not allowed!")
 		}
-		//console.log("In declaration", variable, expr)
 		this.binding.declareVariable(variable, expr)
 		return expr
 	}
@@ -208,5 +213,9 @@ class Binding{
 		}
 		// if this binding does have the variable, return true
 		return true
+	}
+	//check the current binding to see if a variable exists 
+	containsVariable(name){
+		return this.binding.has(name)
 	}
 }

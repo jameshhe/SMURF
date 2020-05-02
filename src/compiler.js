@@ -33,6 +33,5 @@ export default function compileAndRun(grammar, script, printFunction) {
   let ast = grammar.parse(script, { AST: AST })
   let interpreter = new Interpreter()
   let result = interpreter.visit(ast)
-  console.log(result)
   return result
 }
