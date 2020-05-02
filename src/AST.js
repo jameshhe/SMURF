@@ -12,7 +12,7 @@ function makeNode(name, ...attributes) {
 	return constructor
 }
 
-
+export const Print = makeNode("Print", "code")
 export const FunctionCall = makeNode("FunctionCall", "name", "args") 
 export const FunctionDefinition = makeNode("FunctionDefinition", "formals", "code")
 export const Thunk = makeNode("Thunk", "formals", "code", "binding")

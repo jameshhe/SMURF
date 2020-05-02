@@ -2,13 +2,19 @@ import * as AST from "./AST.js"
 
 
 export default class Interpreter {
-	constructor(target, printFunction){
-		this.binding = new Binding()
+	constructor(target, printFunction, binding = new Binding()){
+		this.target = target
+		this.printFunction = printFunction
+		this.binding = binding
 	}
 
 
 	visit(ast) {
 		return ast.accept(this)
+	}
+
+	visitPrint(ast){
+		console.log(ast.code.accept(this))
 	}
 
 	visitFunctionCall(ast){
@@ -26,18 +32,29 @@ export default class Interpreter {
 
 		// for each argument
 		argNames.forEach((argName, index)=>{
-			const argVal = argVals[index]
-			funcBinding.declareVariable(argName.name, argVal.value)
+			argName = argName.name
+			// argVal can be either a value or a variable name (function call back)
+			let argVal = argVals[index].value != null ? argVals[index].value : this.binding.getVariable(argVals[index].name)
+
+			// check if this variable is declared already
+			// if not, declare the variable
+			if(!funcBinding.hasVariable(argName)){
+				funcBinding.declareVariable(argName, argVal)
+			}
+			// if yes, set the inner variable to the declared variable
+			else{
+				funcBinding.declareVariable(argName, funcBinding.getVariable(argName))
+			}
 		})
 		
+		let funcInterpreter = new Interpreter(this.target, this.printFunction, funcBinding)
+		return funcInterpreter.visit(thunk.code)
 	}
 
 	visitFunctionDefinition(ast) {
 		return new AST.Thunk(ast.formals, ast.code, this.binding)
 	}
 
-	visitThunk(ast){
-	}
 
 	visitStatementList(ast){
 		let statements = ast.statements

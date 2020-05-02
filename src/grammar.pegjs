@@ -85,7 +85,7 @@ mult_term
 	  }
 
 primary
-	=  integer / function_call / variable_value / _ "(" _ expr:arithmetic_expression _ ")" _ {return expr} 
+	=  integer / print / function_call / variable_value / _ "(" _ expr:arithmetic_expression _ ")" _ {return expr}
 
 identifier
 	= [a-z][a-zA-Z_0-9]*
@@ -113,6 +113,11 @@ _
 relop
 	= ('==' / '!=' / '>=' / '>' / '<=' / '<')
 
+print
+	= _ "print" _ "(" _ c:code _ ")" 
+	  {
+	  	return new AST.Print(c)
+	  }
 
 function_call
 	= _ name:variable_value _ argumentList:arg_list _
